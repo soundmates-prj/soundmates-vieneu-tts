@@ -1,0 +1,51 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+.xpu_venv/
+venv/
+env/
+ENV/
+
+# Project Specific
+outputs/
+merged_models_cache/
+AUDIO)
+*.log
+.env
+.env.local
+.env.*.local
+
+# Models and Data (Often too large for Git)
+*.gguf
+*.pth
+*.pt
+*.ckpt
+*.bin
+finetune/dataset/
+finetune/output/
+
+# Audio Outputs
+*.mp3
+*.wav
+*.m4a
+*.flac
+
+# IDE Specific
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+
+# OS Specific
+.DS_Store
+Thumbs.db
