@@ -28,7 +28,9 @@ echo "[!] Dang kiem tra va cai thu vien con thieu..."
 if ! python -c "import fastapi,uvicorn,pydantic,numpy,huggingface_hub,vieneu,trafilatura,multipart" >/dev/null 2>&1; then
   echo "[!] Phat hien thieu thu vien. Dang cai dat..."
   python -m pip install --upgrade pip
-  python -m pip install --prefer-binary fastapi uvicorn pydantic numpy huggingface_hub vieneu trafilatura python-multipart
+  python -m pip install --prefer-binary \
+    --extra-index-url https://pnnbao97.github.io/llama-cpp-python-v0.3.16/cpu/ \
+    fastapi uvicorn pydantic numpy huggingface_hub vieneu trafilatura python-multipart
 fi
 
 echo
