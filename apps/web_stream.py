@@ -32,7 +32,7 @@ AVAILABLE_MODELS = {
     }
 }
 
-DEFAULT_MODEL = "ngochuyen"
+DEFAULT_MODEL = "q4"
 current_model_id = DEFAULT_MODEL
 app = FastAPI()
 
