@@ -4,8 +4,9 @@ echo Khoi dong Server VieNeu-TTS (Audio Generator API)
 echo ========================================================
 echo.
 
-echo Dang kiem tra moi truong python ao (venv)...
-if not exist "venv\Scripts\activate.bat" (
+set VENV_PYTHON=%~dp0venv\Scripts\python.exe
+
+if not exist "%VENV_PYTHON%" (
     echo [!] Khong tim thay venv. Dang tao moi truong ao moi...
     python -m venv venv
 ) else (
@@ -31,13 +32,18 @@ if errorlevel 1 (
     echo [OK] Thu vien day du.
 )
 
+echo [!] Dam bao su dung local source (go PyPI version neu co)...
+"%VENV_PYTHON%" -m pip uninstall -y vieneu 2>nul
+"%VENV_PYTHON%" -m pip install -e . --force-reinstall --no-deps
+"%VENV_PYTHON%" -m pip install fastapi uvicorn python-multipart trafilatura 2>nul
+
 echo.
 echo ===============================================================
 echo BAT DAU CHAY AUDIO SERVER API TAI PORT 8008 (CHO TEXT -> AUDIO)
 echo ===============================================================
 chcp 65001 > nul
 set PYTHONIOENCODING=utf-8
-python apps\web_stream.py
+"%VENV_PYTHON%" apps\web_stream.py
 
 echo.
 echo [SERVER DA DUNG]

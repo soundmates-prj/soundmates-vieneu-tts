@@ -100,7 +100,7 @@ class VieNeuTTS(BaseVieneuTTS):
                 filename="*.gguf",
                 verbose=False,
                 n_gpu_layers=-1 if backbone_device in ("gpu", "cuda") else 0,
-                n_ctx=self.max_context,
+                n_ctx=4096,   # must be >= max_context so cloned voices with many ref_codes fit
                 mlock=True,
                 flash_attn=True if backbone_device in ("gpu", "cuda") else False,
                 token=hf_token,
@@ -309,7 +309,13 @@ class VieNeuTTS(BaseVieneuTTS):
 
         for phonemes in chunk_phonemes:
             if self._is_quantized_model:
-                yield from self._infer_stream_ggml(ref_codes, ref_phonemes, phonemes, temperature, top_k)
+                # NOTE: _infer_stream_ggml accumulates tokens per-streaming-chunk which
+                # causes context overflow (prompt grows each chunk). Use non-streaming
+                # _infer_ggml instead — it respects max_context per call and works with
+                # split text chunks via split_text_into_chunks().
+                output_str = self._infer_ggml(ref_codes, ref_phonemes, phonemes, temperature, top_k)
+                wav = self._decode(output_str)
+                yield self._apply_watermark(wav)
             else:
                 prompt_ids = self._apply_chat_template(ref_codes, ref_phonemes, phonemes)
                 output_str = self._infer_torch(prompt_ids, temperature, top_k)
@@ -418,7 +424,7 @@ class VieNeuTTS(BaseVieneuTTS):
         remaining_tokens = len(token_cache) - n_decoded_tokens
         if remaining_tokens > 0:
             tokens_start = max(len(token_cache) - (self.streaming_lookback + self.streaming_overlap_frames + remaining_tokens), 0)
-            sample_start = (len(token_cache) - tokens_start - remaining_tokens - self.streaming_overlap_frames) * self.hop_length
+            sample_start = (self.streaming_lookback + self.streaming_overlap_frames) * self.hop_length
             curr_codes = token_cache[tokens_start:]
             recon = self._decode("".join(curr_codes))
             recon = self._apply_watermark(recon)
