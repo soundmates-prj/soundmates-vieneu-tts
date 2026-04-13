@@ -46,3 +46,38 @@ Khi bạn thấy hiện ra `🌍 Open http://localhost:8008 to test GGUF Streami
 Giả sử sau này bạn đổi lại Server có máy gắn Card xịn (NVIDIA GPU), bạn muốn dùng lại Docker siêu tốc độ (cái mà gọi Port 23333). 
 Thì bạn không cần chạy lệnh `python apps\web_stream.py` GGUF CPU này nữa. 
 Lúc đó, bạn sẽ bật Docker bằng lệnh `docker run -d --gpus all pnnbao/vieneu-tts:serve ...` và chạy file API cầu nối `python apps\remote_stream.py` nhé! Cả 2 cách bản chất chỉ đổi máy chủ xử lý, nhưng API ném cho web (Port 8008) là giữ nguyên!
+
+---
+
+### 🐧 Chạy trên Ubuntu/Linux (tương đương start_server.bat)
+
+Neu tren VPS Ubuntu bi loi 503 khi tao audio, thuong do VieNeu chua duoc khoi dong dung cach (thieu venv/dependency) hoac port 8008 chua mo cho docker bridge.
+
+#### Cach nhanh nhat
+
+```bash
+cd /opt/vieneu-tts/soundmates-vieneu-tts
+chmod +x start_server.sh
+./start_server.sh
+```
+
+Script `start_server.sh` se:
+- Tu dong tao/kich hoat `venv` hoac `.venv`
+- Kiem tra va cai thu vien can thiet
+- Chay `apps/web_stream.py` tren `0.0.0.0:8008`
+
+#### Kiem tra sau khi chay
+
+```bash
+ss -ltnp | grep 8008 || true
+curl -f http://127.0.0.1:8008/models
+```
+
+Neu 2 lenh tren OK ma backend van 503, kiem tra tiep tu network docker:
+
+```bash
+NET=$(docker inspect soundmates-ai-service --format '{{range $k, $v := .NetworkSettings.Networks}}{{println $k}}{{end}}' | head -n 1)
+docker run --rm --network "$NET" curlimages/curl:8.7.1 -sS -m 10 -D - http://172.20.0.1:8008/models
+```
+
+Neu lenh nay timeout, nghia la luong `ai-service -> host:8008` dang bi chan (firewall/routing).

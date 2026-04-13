@@ -1,0 +1,1 @@
+Chào bạn, đây là thử nghiệm giọng nói tự nhiên của tôi để thực hiện voice cloning. Hy vọng sau khi thu âm trong môi trường yên tĩnh, mô hình VieNeu-TTS sẽ học được đúng tông giọng và cách ngắt nghỉ của tôi, giúp tạo ra những bản audio chất lượng hơn.
