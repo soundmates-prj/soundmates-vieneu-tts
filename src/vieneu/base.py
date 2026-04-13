@@ -20,7 +20,7 @@ class BaseVieneuTTS(ABC):
 
     def __init__(self):
         self.sample_rate = 24_000
-        self.max_context = 2048
+        self.max_context = 4096
         self.hop_length = 480
 
         self.assets_dir = Path(__file__).parent / "assets"
