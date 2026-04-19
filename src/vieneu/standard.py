@@ -100,7 +100,8 @@ class VieNeuTTS(BaseVieneuTTS):
                 filename="*.gguf",
                 verbose=False,
                 n_gpu_layers=-1 if backbone_device in ("gpu", "cuda") else 0,
-                n_ctx=4096,   # must be >= max_context so cloned voices with many ref_codes fit
+                n_ctx=8192,   # must be >= max_context so cloned voices with many ref_codes fit
+                n_threads=max(1, (os.cpu_count() or 8) // 2), # utilize half of logical CPUs
                 mlock=True,
                 flash_attn=True if backbone_device in ("gpu", "cuda") else False,
                 token=hf_token,

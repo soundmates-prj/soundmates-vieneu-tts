@@ -290,12 +290,13 @@ async def clone_voice(voice_id: str = Form(...), ref_text: str = Form(...), file
         # For zero-shot cloning, ref_text MUST perfectly match the audio.
         # If we silently truncate the codes, the model hallucinates the remaining
         # ref_text into the output. Also, GGUF has a strict context limit.
-        MAX_REF_CODES = 350
+        # Check length of audio 
+        MAX_REF_CODES = 2500
         if len(ref_codes_list) > MAX_REF_CODES:
             duration_sec = len(ref_codes_list) / 50.0  # Approx 50 codes per second
             return {
                 "status": "error", 
-                "message": f"Audio is too long ({duration_sec:.1f}s, {len(ref_codes_list)} codes). For voice cloning, please use a short clip (3-6 seconds) and ensure your ref_text EXACTLY matches every spoken word."
+                "message": f"Audio is too long ({duration_sec:.1f}s). For zero-shot cloning, please keep it under {(MAX_REF_CODES/50):.0f} seconds and ensure ref_text matches exactly."
             }
 
         # ── 1. Register in-memory (for current session) ──────────────────────
